@@ -1,7 +1,5 @@
 # Wireless RC Car 🚗
-
 An Arduino-based RC car controlled by a custom wireless joystick transmitter. The car receives real-time joystick input over a 2.4GHz radio link and translates it into motor commands — supporting forward, backward, left/right turns, and smooth diagonal movement.
-
 Built as a personal hardware project and demoed at high school.
 
 ---
@@ -12,6 +10,7 @@ Built as a personal hardware project and demoed at high school.
 ![RC Car](imagesRC-Car/RC-Car.jpg)
 ![Transmitter](imagesRC-Car/transmitterSchematic.png)
 ![Reciever](imagesRC-Car/recieverSchematic.png)
+
 ---
 
 ## 🔧 How It Works
@@ -77,13 +76,14 @@ The joystick's analog output (0–1023) is mapped to 8 movement zones: forward, 
 
 ## 💻 Code
 
-The project contains three sketches:
+The project contains five sketches — two for the final RC car and three standalone component tests used during development:
+
+### Final Sketches
 
 | Folder | Sketch | Description |
 |---|---|---|
 | `receiver/` | `rc_car_receiver.ino` | Upload to the Arduino on the car |
 | `transmitter/` | `rc_car_transmitter.ino` | Upload to the Arduino in the joystick controller |
-| `joystick_test/` | `joystick_test.ino` | Standalone test to verify joystick readings over Serial Monitor |
 
 ### Installing the RF24 Library
 Before uploading either sketch, install the RF24 library in the Arduino IDE:
@@ -99,7 +99,58 @@ Before uploading either sketch, install the RF24 library in the Arduino IDE:
 5. Repeat for the second Arduino with the other sketch
 
 ### Calibration
-The receiver sketch uses threshold values defined at the top of the file to determine the joystick's deadzone and movement boundaries. If your car behaves unexpectedly, run `joystick_test.ino` first to read your joystick's actual center and min/max values, then update the `#define` constants in `rc_car_receiver.ino` accordingly.
+The receiver sketch uses threshold values defined at the top of the file to determine the joystick's deadzone and movement boundaries. If your car behaves unexpectedly, run `JoystickMod_Test.ino` first to read your joystick's actual center and min/max values, then update the `#define` constants in `rc_car_receiver.ino` accordingly.
+
+---
+
+## 🧪 Component Tests
+
+These three sketches were written during development to verify each hardware component worked correctly in isolation before integrating everything together. If you are building this project yourself, it is recommended to run these tests first before uploading the final receiver/transmitter code.
+
+### 1. `DCMotor_Test.ino`
+Tests the L298N motor driver and DC motors independently of any radio or joystick input.
+
+**What it does:** Runs both motors forward at full speed for 2 seconds, stops them for 1 second, then runs them backward for 2 seconds — then repeats. No serial output; you verify it's working by watching the motors physically spin.
+
+**Use this to confirm:**
+- The L298N is wired correctly to the Arduino
+- Both motors spin in the correct direction
+- PWM speed control is working via the enable pins (ENA/ENB)
+
+---
+
+### 2. `JoystickMod_Test.ino`
+Tests the joystick module and prints live X/Y axis readings to the Serial Monitor.
+
+**What it does:** Reads analog values from the joystick's X-axis (A1) and Y-axis (A0) every 300ms and prints them in a labeled table. The column headers reprint every 20 rows to keep the output readable as it scrolls.
+
+**Use this to confirm:**
+- The joystick is wired correctly and returning values
+- The center resting position reads approximately 512 on both axes
+- The full range sweeps from ~0 to ~1023 when moved in each direction
+- Use the readings here to set the `#define` calibration values in `rc_car_receiver.ino`
+
+**Expected Serial Monitor output:**
+```
+          X axis       Y axis
+          512          510
+          508          514
+          0            512       ← joystick pushed left
+          1023         512       ← joystick pushed right
+```
+
+---
+
+### 3. `nRF_Test.ino`
+Tests the nRF24L01 radio module and verifies it initializes correctly on the Arduino.
+
+**What it does:** Initializes the radio module in listening mode and prints its full configuration details to the Serial Monitor via `radio.printDetails()`. The `loop()` is intentionally empty — this sketch is purely for verifying the radio is detected and configured correctly.
+
+**Use this to confirm:**
+- The nRF24L01 is wired correctly and recognized by the Arduino
+- The SPI connection is working
+- The correct data rate, power level, and address are being set
+- If `radio.printDetails()` shows all zeros or garbage, there is a wiring issue (most commonly VCC connected to 5V instead of 3.3V)
 
 ---
 
