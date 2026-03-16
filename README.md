@@ -10,8 +10,8 @@ Built as a personal hardware project and demoed at high school.
 
 <!-- Upload your photos to the repo and replace the filenames below -->
 ![RC Car](imagesRC-Car/RC-Car.jpg)
-![Transmitter](imagesRC-Car/transmitterSchematic.jpg)
-![Reciever](imagesRC-Car/recieverSchematic.jpg)
+![Transmitter](imagesRC-Car/transmitterSchematic.png)
+![Reciever](imagesRC-Car/recieverSchematic.png)
 ---
 
 ## 🔧 How It Works
