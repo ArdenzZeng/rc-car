@@ -9,7 +9,7 @@ Built as a personal hardware project and demoed at high school.
 ## 📸 Demo
 
 <!-- Upload your photos to the repo and replace the filenames below -->
-![RC Car](imagesRC-Car/RC_Car.jpg)
+![RC Car](imagesRC-Car/RC-Car.jpg)
 ![Transmitter](imagesRC-Car/transmitterSchematic.jpg)
 ![Reciever](imagesRC-Car/recieverSchematic.jpg)
 ---
